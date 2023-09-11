@@ -22,23 +22,45 @@ class Portada(Escena):
                             'images', 'arkanoid_name.png')
         self.logo = pg.image.load(ruta)
 
+        ruta_font = os.path.join('Resorces', 'resources',
+                                 'fonts', 'CabinSketch-Bold.ttf')
+        self.tipo = pg.font.Font(ruta_font, 35)
+
     def bucle_principal(self):
         super().bucle_principal()
         salir = False
         while not salir:
             for evento in pg.event.get():
+                if evento.type == self.comprobar_teclas:
+                    salir = True
                 if evento.type == pg.QUIT:
                     salir = True
 
             self.pantalla.fill((99, 0, 0))
             self.pintar_logo()
+            self.pintar_mensaje()
+            self.comprobar_teclas()
             pg.display.flip()
+
+    def comprobar_teclas(self):
+        espacio = pg.key.get_pressed()
+
+        if espacio[pg.K_SPACE]:
+            salir = True
+        print('QUIERES SALIR')
 
     def pintar_logo(self):
         ancho, alto = self.logo.get_size()
         pos_x = (Ancho - ancho) / 2
         pos_y = (Alto - alto)/2
         self.pantalla.blit(self.logo, (pos_x, pos_y))
+
+    def pintar_mensaje(self):
+        mensaje = 'Pulsa <Espacio> para comenzar'
+        texto = self.tipo.render(mensaje, True, (255, 255, 255))
+        pos_x = (Ancho - texto.get_width())/2
+        pos_y = Alto / 4 * 3
+        self.pantalla.blit(texto, (pos_x, pos_y))
 
 
 class Partida(Escena):

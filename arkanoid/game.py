@@ -1,6 +1,6 @@
 import pygame as pg
 from . import Ancho, Alto, Color_fondo
-from . escenas import Portada, Partida, Mejore_Jugadores
+from .escenas import Portada, Partida, Mejore_Jugadores
 
 # Pntalla
 

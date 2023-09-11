@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 from . import Ancho, Alto, Color_fondo
 
 # Pntalla
@@ -6,23 +6,23 @@ from . import Ancho, Alto, Color_fondo
 
 class Arkanoid:
     def __init__(self):
-        pygame.init()
-        self.pantalla = pygame.display.set_mode((Ancho, Alto))
+        pg.init()
+        self.pantalla = pg.display.set_mode((Ancho, Alto))
 
     def Jugar(self):
         salir = False
         while not salir:
             # Capturar eventos
-            for evento in pygame.event.get():
-                if pygame.QUIT == evento.type:
+            for evento in pg.event.get():
+                if pg.QUIT == evento.type:
                     salir = True
 
             # Pintar y calcular el estado de los elementos
             self.pantalla.fill(Color_fondo)
 
            # Mostrar los cambios y controlar el reloj
-            pygame.display.flip()
-        pygame.quit()
+            pg.display.flip()
+        pg.quit()
 
 
 if __name__ == 'main':

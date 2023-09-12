@@ -1,11 +1,13 @@
 import os
 import pygame as pg
-from . import Alto, Ancho
+from . import Alto, Ancho, FPS
+from .entidades import Raqueta
 
 
 class Escena:
     def __init__(self, pantalla):
         self.pantalla = pantalla
+        self.reloj = pg.time.Clock()
 
     def bucle_principal(self):
         '''
@@ -31,23 +33,21 @@ class Portada(Escena):
         salir = False
         while not salir:
             for evento in pg.event.get():
-                if evento.type == self.comprobar_teclas:
-                    salir = True
                 if evento.type == pg.QUIT:
                     salir = True
 
             self.pantalla.fill((99, 0, 0))
             self.pintar_logo()
             self.pintar_mensaje()
-            self.comprobar_teclas()
+            # self.comprobar_teclas()
             pg.display.flip()
 
-    def comprobar_teclas(self):
+    '''def comprobar_teclas(self):
         espacio = pg.key.get_pressed()
 
         if espacio[pg.K_SPACE]:
             salir = True
-        print('QUIERES SALIR')
+        print('QUIERES SALIR')'''
 
     def pintar_logo(self):
         ancho, alto = self.logo.get_size()
@@ -66,15 +66,22 @@ class Portada(Escena):
 class Partida(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
+        ruta_fondo = os.path.join(
+            'Resorces', 'resources', 'images', 'background.jpg')
+        self.fondo = pg.image.load(ruta_fondo)
+        self.jugador = Raqueta()
 
     def bucle_principal(self):
         super().bucle_principal()
         salir = False
         while not salir:
+            self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
             self.pintar_fondo()
+            self.jugador.update()
+            self.pantalla.blit(self.jugador.image, self.jugador.rect)
             pg.display.flip()
 
     def pintar_fondo(self):

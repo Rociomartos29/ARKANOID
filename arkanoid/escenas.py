@@ -74,8 +74,16 @@ class Partida(Escena):
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
-            self.pantalla.fill((0, 99, 0))
+            self.pintar_fondo()
             pg.display.flip()
+
+    def pintar_fondo(self):
+        self.pantalla.fill((0, 0, 99))
+
+        self.pantalla.blit(self.fondo, (0, 0))
+        self.pantalla.blit(self.fondo, (600, 0))
+        self.pantalla.blit(self.fondo, (0, 800))
+        self.pantalla.blit(self.fondo, (600, 800))
 
 
 class Mejore_Jugadores(Escena):

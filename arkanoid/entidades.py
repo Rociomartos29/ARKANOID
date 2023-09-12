@@ -3,12 +3,16 @@ from typing import Any
 import pygame as pg
 from . import Ancho, Alto
 
+margen = 25
+velocidad = 5
+
 
 class Raqueta(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.imagenes = []
-
+        margen = 25
+        velocidad = 5
         for i in range(3):
             ruta_image = os.path.join(
                 'Resorces', 'resources', 'images', f'electric0{i}.png')
@@ -16,7 +20,6 @@ class Raqueta(pg.sprite.Sprite):
         self.contador = 0
         self.image = self.imagenes[self.contador]
 
-        margen = 25
         self.rect = self.image.get_rect(
             midbottom=(Ancho/2, Alto - margen))
 
@@ -24,7 +27,7 @@ class Raqueta(pg.sprite.Sprite):
         self.contador += 1
         if self.contador > 2:
             self.contador = 0
-
+        self.comprobar_teclas()
         self.image = self.imagenes[self.contador]
 
     def mover(self):
@@ -35,3 +38,10 @@ class Raqueta(pg.sprite.Sprite):
 
     def reset(self):
         pass
+
+    def comprobar_teclas(self):
+        teclas = pg.key.get_pressed()
+        if teclas[pg.K_LEFT]:
+            self.rect.x -= velocidad
+        if teclas[pg.K_RIGHT]:
+            self.rect.x += velocidad

@@ -39,15 +39,9 @@ class Portada(Escena):
             self.pantalla.fill((99, 0, 0))
             self.pintar_logo()
             self.pintar_mensaje()
+
             # self.comprobar_teclas()
             pg.display.flip()
-
-    '''def comprobar_teclas(self):
-        espacio = pg.key.get_pressed()
-
-        if espacio[pg.K_SPACE]:
-            salir = True
-        print('QUIERES SALIR')'''
 
     def pintar_logo(self):
         ancho, alto = self.logo.get_size()

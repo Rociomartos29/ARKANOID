@@ -1,5 +1,5 @@
 import pygame as pg
-from . import Ancho, Alto, Color_fondo
+from . import Ancho, Alto
 from .escenas import Portada, Partida, Mejore_Jugadores
 
 # Pntalla
@@ -21,7 +21,10 @@ class Arkanoid:
 
     def Jugar(self):
         for escena in self.escenas:
-            escena.bucle_principal()
+            he_acabado = escena.bucle_principal()
+            if he_acabado:
+                print('La escena me pide que acabe el juego')
+                break
 
         pg.quit()
 

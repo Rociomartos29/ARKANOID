@@ -9,4 +9,6 @@ VEL_MAX = 12
 VEL_MIN_Y = -5
 
 
+VIDAS = 3
+
 # Portada

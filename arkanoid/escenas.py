@@ -80,18 +80,27 @@ class Partida(Escena):
                     salir = True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     juego_iniciado = True
+            
+            if self.pelota.vidas < 0:
+                salir = True
+
             self.pintar_fondo()
             self.jugador.update()
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             
 
             self.muro.draw(self.pantalla)
+            juego_iniciado = self.pelota.update(juego_iniciado)
 
             self.pelota.update(juego_iniciado)
             self.pantalla.blit(self.pelota.image, self.pelota.rect)
             golpeadas = pg.sprite.spritecollide(self.pelota, self.muro, True)
             if len(golpeadas)>0 :
+                for ladrillo in golpeadas:
+                        ladrillo.update(self.muro)
+
                 self.pelota.vel_y = -self.pelota.vel_y
+            
             pg.display.flip()
 
     
@@ -104,13 +113,19 @@ class Partida(Escena):
         self.pantalla.blit(self.fondo, (600, 800))
     def crear_muro(self):
         filas = 6
-        columnas = 10
+        columnas = 9
         margen_superior = 20
+        tipo = Ladrillo.verde
 
         for fila in range(filas):   # 0-3
+            if tipo == Ladrillo.rojo:
+                tipo = Ladrillo.verde
+            else:
+                tipo = Ladrillo.rojo
+
             for col in range(columnas):
                 # por aquí voy a pasar filas*columnas = 24 veces
-                ladrillo = Ladrillo()
+                ladrillo = Ladrillo(tipo)
                 margen_izquierdo = (Ancho - columnas * ladrillo.rect.width) / 2
                 # x = ancho_lad * col
                 # y = alto_lad * fila

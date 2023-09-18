@@ -2,7 +2,7 @@ import os
 import random
 from typing import Any
 import pygame as pg
-from . import Ancho, Alto, VEL_MAX, VEL_MIN_Y
+from . import Ancho, Alto, VEL_MAX, VEL_MIN_Y, VIDAS
 
 margen = 25
 velocidad = 5
@@ -13,7 +13,7 @@ class Raqueta(pg.sprite.Sprite):
         super().__init__()
         self.imagenes = []
         margen = 25
-        velocidad = 5
+        
         for i in range(3):
             ruta_image = os.path.join('resources', 'images', f'electric0{i}.png')
             self.imagenes.append(pg.image.load(ruta_image))
@@ -40,6 +40,7 @@ class Raqueta(pg.sprite.Sprite):
         pass
 
     def comprobar_teclas(self):
+        velocidad = 10
         teclas = pg.key.get_pressed()
         if teclas[pg.K_LEFT]:
             self.rect.x -= velocidad
@@ -47,15 +48,32 @@ class Raqueta(pg.sprite.Sprite):
             self.rect.x += velocidad
 
 class Ladrillo(pg.sprite.Sprite):
-
-    def __init__(self):
+    verde = 0
+    rojo = 1
+    rojo_roto = 2
+    IMG_LADRILLO = ['greenTile.png', 'redTile.png', 'redTileBreak.png']
+    def __init__(self, color = verde):
         super().__init__()
-        ruta_verde = os.path.join('resources', 'images', 'greenTile.png')
-        self.image = pg.image.load(ruta_verde)
+        self.tipo = color
+        self.imagenes = []
+        for img in self.IMG_LADRILLO:
+            ruta = os.path.join('resources', 'images', img)
+            self.imagenes.append(pg.image.load(ruta))
+        self.image = pg.image.load(ruta)
+        self.image = self.imagenes[color]
         self.rect = self.image.get_rect()
 
-    def update():
-        pass
+    def update(self, muro):
+        ruta = os.path.join('resources', 'images', self.IMG_LADRILLO[self.tipo])
+        self.image = pg.image.load(ruta)
+        if self.tipo == Ladrillo.rojo:
+            self.tipo = Ladrillo.rojo_roto
+
+        else:
+           muro.remove(self)
+        self.image = self.imagenes[self.tipo]
+
+        
     
 class Pelota(pg.sprite.Sprite):
 
@@ -67,6 +85,7 @@ class Pelota(pg.sprite.Sprite):
         self.image = pg.image.load(os.path.join('resources', 'images', 'ball1.png'))
         self.rect = self.image.get_rect(midbottom=raqueta.rect.midtop)
         self.raqueta = raqueta
+        self.vidas = VIDAS
 
     def inicializar_velocidades(self):
         self.vel_x = random.randint(-VEL_MAX, VEL_MAX)
@@ -85,15 +104,17 @@ class Pelota(pg.sprite.Sprite):
 
             if self.rect.top >= Alto:
                 self.pierdes()
-                self.reset()
+                return True
             if pg.sprite.collide_mask(self, self.raqueta):
                 self.inicializar_velocidades()
             
 
     def pierdes(self):
         print('Has perdido un punto')
+        self.vidas -=  1
+        self.inicializar_velocidades()
 
-    
+            
 
 
     def reset(self):

@@ -11,4 +11,6 @@ VEL_MIN_Y = -5
 
 VIDAS = 3
 
+ALTO_MARCADOR = 50
+
 # Portada

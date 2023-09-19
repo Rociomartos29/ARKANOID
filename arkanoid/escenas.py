@@ -1,7 +1,7 @@
 import os
 import pygame as pg
-from . import Alto, Ancho, FPS
-from .entidades import Raqueta, Ladrillo, Pelota
+from . import Alto, Ancho, FPS, VIDAS, ALTO_MARCADOR
+from .entidades import Raqueta, Ladrillo, Pelota, ContadorVidas, Marcador
 
 
 class Escena:
@@ -67,6 +67,8 @@ class Partida(Escena):
         self.jugador = Raqueta()
         self.muro = pg.sprite.Group()
         self.pelota = Pelota(self.jugador)
+        self.contador_vidas = ContadorVidas(VIDAS)
+        self.marcador= Marcador()
 
     def bucle_principal(self):
         super().bucle_principal()
@@ -77,12 +79,10 @@ class Partida(Escena):
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    salir = True
+                    return  True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     juego_iniciado = True
             
-            if self.pelota.vidas < 0:
-                salir = True
 
             self.pintar_fondo()
             self.jugador.update()
@@ -94,15 +94,24 @@ class Partida(Escena):
 
             self.pelota.update(juego_iniciado)
             self.pantalla.blit(self.pelota.image, self.pelota.rect)
+
             golpeadas = pg.sprite.spritecollide(self.pelota, self.muro, True)
             if len(golpeadas)>0 :
+                
                 for ladrillo in golpeadas:
+                        anterior = len(self.muro)
                         ladrillo.update(self.muro)
-
+                        if len(self.muro) < anterior:
+                            self.marcador.aumentar(ladrillo.puntos)
+                
                 self.pelota.vel_y = -self.pelota.vel_y
-            
+            self.marcador.pintar(self.pantalla)
             pg.display.flip()
-
+            if self.pelota.he_perdido:
+                # acciones cada vez que pierdo una vida
+                salir = self.contador_vidas.perder_vida()
+                self.pelota.he_perdido = False
+                juego_iniciado = False
     
     def pintar_fondo(self):
         self.pantalla.fill((0, 0, 99))
@@ -111,10 +120,12 @@ class Partida(Escena):
         self.pantalla.blit(self.fondo, (600, 0))
         self.pantalla.blit(self.fondo, (0, 800))
         self.pantalla.blit(self.fondo, (600, 800))
+
+
     def crear_muro(self):
         filas = 6
         columnas = 9
-        margen_superior = 20
+        margen_superior = 60
         tipo = Ladrillo.verde
 
         for fila in range(filas):   # 0-3
@@ -125,7 +136,8 @@ class Partida(Escena):
 
             for col in range(columnas):
                 # por aquí voy a pasar filas*columnas = 24 veces
-                ladrillo = Ladrillo(tipo)
+                puntos = (tipo-1) * (fila+1)
+                ladrillo = Ladrillo(puntos, tipo)
                 margen_izquierdo = (Ancho - columnas * ladrillo.rect.width) / 2
                 # x = ancho_lad * col
                 # y = alto_lad * fila
@@ -146,5 +158,5 @@ class Mejore_Jugadores(Escena):
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
-            self.pantalla.fill((0, 0, 99))
+            self.pantalla.fill((0, 99, 0))
             pg.display.flip()

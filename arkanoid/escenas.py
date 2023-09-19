@@ -2,6 +2,7 @@ import os
 import pygame as pg
 from . import Alto, Ancho, FPS, VIDAS, ALTO_MARCADOR
 from .entidades import Raqueta, Ladrillo, Pelota, ContadorVidas, Marcador
+from .records import Records
 
 
 class Escena:
@@ -150,6 +151,7 @@ class Partida(Escena):
 class Mejore_Jugadores(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
+        self.records = Records()
 
     def bucle_principal(self):
         super().bucle_principal()
@@ -159,4 +161,5 @@ class Mejore_Jugadores(Escena):
                 if evento.type == pg.QUIT:
                     salir = True
             self.pantalla.fill((0, 99, 0))
+
             pg.display.flip()
